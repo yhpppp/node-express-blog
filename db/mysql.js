@@ -1,5 +1,6 @@
 const mysql = require("mysql");
-const { MYSQL_CONF } = require("../conf/mysql");
+
+const { MYSQL_CONF } = require("../conf/db");
 
 const connection = mysql.createConnection(MYSQL_CONF);
 
@@ -19,4 +20,4 @@ function exec(sql) {
   return promise;
 }
 
-module.exports = exec;
+module.exports = { exec, escape: mysql.escape };

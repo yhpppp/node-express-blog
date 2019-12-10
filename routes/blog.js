@@ -7,9 +7,11 @@ const {
   updateBlog,
   deleteBlog,
   createBlog
-} = require("../controller/blogs");
+} = require("../controller/blog");
 
 router.get("/list", (req, res, next) => {
+  console.log('req.session :) ', req.session);
+  
   const result = readList();
   result.then(listdata => {
     res.json(new SuccessModel(listdata, "Get succeeded"));
