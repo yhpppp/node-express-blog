@@ -6,14 +6,13 @@ const login = require("../controller/user");
 router.post("/login", (req, res, next) => {
   // test
   // req.body = req.query;
-  console.log('req.body :) ', req.body);
   
   const result = login(req.body);
   result.then(params => {
     let userData;
     if (params) {
       userData = new SuccessModel(params);
-      console.log("params :) ", params);
+      // console.log("params :) ", params);
 
       req.session.userName = params.username;
     } else {

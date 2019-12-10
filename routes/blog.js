@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { SuccessModel } = require("../model/resModel");
+const { SuccessModel, ErrorModel } = require("../model/resModel");
 const {
   readList,
   readDetail,
@@ -8,11 +8,19 @@ const {
   deleteBlog,
   createBlog
 } = require("../controller/blog");
+const checkLogin = require("../middleware/checkLogin");
 
 router.get("/list", (req, res, next) => {
-  console.log('req.session :) ', req.session);
-  
-  const result = readList();
+  let name;
+  if (req.query.isadmin) {
+    if (req.session.userName) {
+      name = req.session.userName;
+    } else {
+      res.json(new ErrorModel("你没登录!"));
+      return;
+    }
+  }
+  const result = readList(name);
   result.then(listdata => {
     res.json(new SuccessModel(listdata, "Get succeeded"));
   });
@@ -25,22 +33,27 @@ router.get("/detail", (req, res, next) => {
   });
 });
 
-router.post("/update", (req, res, next) => {
+router.post("/update", checkLogin, (req, res, next) => {
+  console.log("req.query.id :) ", req.query.id);
+
+  req.body.id = req.query.id;
+  console.log("req.body :) ", req.body);
+
   const result = updateBlog(req.body);
   result.then(packet => {
     res.json(new SuccessModel(packet.affectedRows, "updated"));
   });
 });
 
-router.post("/delete", (req, res, next) => {
-  const result = deleteBlog(req.body.id);
+router.post("/delete", checkLogin, (req, res, next) => {
+  const result = deleteBlog(req.query.id);
   result.then(packet => {
     res.json(new SuccessModel(packet.affectedRows, "deleted"));
   });
 });
 
-router.post("/create", (req, res, next) => {
-  const result = createBlog(req.body);
+router.post("/create", checkLogin, (req, res, next) => {
+  const result = createBlog(req.body, (session = req.session));
   result.then(packet => {
     res.json(new SuccessModel(packet.affectedRows, "created"));
   });
