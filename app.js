@@ -6,6 +6,10 @@ var logger = require("morgan");
 const session = require("express-session");
 const redisClient = require('./db/redis')
 const RedisStore = require('connect-redis')(session)
+const fs = require('fs')
+// write log
+const  morgan = require('morgan')
+
 
 var blogRouter = require("./routes/blog");
 var userRouter = require("./routes/user");
@@ -16,7 +20,19 @@ var app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
-app.use(logger("dev"));
+// log
+if(process.env.NODE_ENV === 'dev'){
+  app.use(logger("dev"));
+}else {
+  const logFilePath = path.join(__dirname,'logs','access.log')
+  const inputStream = fs.createWriteStream(logFilePath,{
+    flags:'a'
+  })
+  app.use(logger("combined",{
+    stream:inputStream
+  }))
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

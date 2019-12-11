@@ -16,8 +16,17 @@ if (env === "dev") {
     port: '6379'
   };
 } else if (env === "production") {
-  MYSQL_CONF = {};
-  REDIS_CONF = {};
+  MYSQL_CONF = {
+    host: "localhost",
+    user: "root",
+    password: "root",
+    database: "express_blog",
+    port: "3306"
+  };
+  REDIS_CONF = {
+    host: 'localhost',
+    port: '6379'
+  };
 }
 
 module.exports = { MYSQL_CONF, REDIS_CONF };
