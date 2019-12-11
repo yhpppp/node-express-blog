@@ -7,8 +7,7 @@ const session = require("express-session");
 const redisClient = require('./db/redis')
 const RedisStore = require('connect-redis')(session)
 const fs = require('fs')
-// write log
-const  morgan = require('morgan')
+
 
 
 var blogRouter = require("./routes/blog");
